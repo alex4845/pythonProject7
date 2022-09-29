@@ -1,0 +1,23 @@
+{% extends 'cards/base.html' %}
+
+{% block title %}
+Главная
+{% endblock %}
+
+{% block content %}
+
+<h1>Приложение для операции с картами</h1>
+<h2>
+    <a href="{% url 'add card' %}" type="submit">Добавить карту</a>
+
+</h2>
+<h2>
+
+    <a href="{% url 'search' %}" type="submit">Найти карту</a>
+</h2>
+<h2>
+
+    <a href="{% url 'generator' %}" type="submit">Сгенерировать несколько карт</a>
+</h2>
+
+{% endblock %}

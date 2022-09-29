@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <h3>
+    <a href="{% url 'main page' %}" type="submit">Главная страница</a>
+    <a href="{% url 'search' %}" type="submit">Поиск карты</a>
+    </h3>
+    <title>{% block title %}
+    {% endblock %}</title>
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+
+</body>
+</html>

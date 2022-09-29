@@ -1,0 +1,22 @@
+{% extends 'cards/base.html' %}
+
+{% block title %}
+Добавить карту
+{% endblock %}
+
+{% block content %}
+<h1>Добавление карты</h1>
+<form method="post">
+
+    {%  csrf_token %}
+
+    {{ form.as_p }}
+
+    <input type="submit" value="Сохранить данные">
+
+</form>
+{% if a %}
+    <h2>Карта сохранена</h2>
+{% endif %}
+
+{% endblock %}

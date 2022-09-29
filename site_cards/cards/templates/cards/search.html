@@ -1,0 +1,37 @@
+{% extends 'cards/base.html' %}
+
+{% block title %}
+Поиск
+{% endblock %}
+
+{% block content %}
+
+<h1>Поиск карты</h1>
+<form method="post">
+         {%  csrf_token %}
+    <h4>
+        <input type="text" placeholder="Серия" name="Серия">
+        <input type="number"  placeholder="Номер" name="Номер">
+        <input type="text"  placeholder="Статус" name="Статус">
+
+    <input type="submit" value="Найти">
+
+    </h4>
+    </form>
+
+{% if a %}
+    {% for i in a %}
+<div>
+    <h3><a href="{% url 'action' pk=i.pk %}"> {{ i.pk }} | карта № {{ i.number }} | серия {{ i.serie }} | статус {{ i.status }} | дата открытия
+        {{ i.enter_date }} | дата закрытия {{ i.end_date }}</a></h3>
+</div>
+    {% endfor %}
+
+{% else %}
+
+        <h3>{{ b }}</h3>
+
+{% endif %}
+
+{% endblock %}
+
