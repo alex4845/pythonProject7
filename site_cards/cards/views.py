@@ -16,10 +16,10 @@ def main_page(request):
 
     return render(request, 'cards/index.html')
 
+
 def add_card(request):
     if request.method == "GET":
         form = CardForm()
-
         return render(request, 'cards/add_card.html', {"form": form})
 
     if request.method == "POST":
@@ -28,6 +28,7 @@ def add_card(request):
             form = form.save()
             a = form
         return render(request, 'cards/add_card.html', {"a": a})
+
 
 def generator(request):
     if request.method == "GET":
@@ -53,9 +54,9 @@ def generator(request):
             a.save()
         return render(request, 'cards/generator.html', {"a": a})
 
+
 def search(request):
     if request.method == "GET":
-
         return render(request, 'cards/search.html')
     if request.method == "POST":
         status = request.POST["Статус"]

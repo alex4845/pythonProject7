@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Cards(models.Model):
     serie = models.CharField(max_length=10)
     number = models.IntegerField(max_length=15)
