@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cards
+from .models import Shine
 
-admin.site.register(Cards)
+admin.site.register(Shine)
 

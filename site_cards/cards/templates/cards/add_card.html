@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<h1>Добавление карты</h1>
-<form method="post">
+<h1>Добавление новых шин</h1>
+<form method="post" enctype="multipart/form-data">
 
     {%  csrf_token %}
 
@@ -15,8 +15,17 @@
     <input type="submit" value="Сохранить данные">
 
 </form>
+{% if img_obj %}
+
+    <img src="{{ img_obj.image.url}}" style="max-height:200px">
+{% endif %}
+
+
 {% if a %}
-    <h2>Карта сохранена</h2>
+    <h3> R {{ a.radius }} | {{ a.shirina }} / {{ a.visota }} |
+        {{ a.mark }} | {{ a.note }}</h3>
+    <h2>Данные сохранены</h2>
+
 {% endif %}
 
 {% endblock %}

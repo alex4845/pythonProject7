@@ -1,34 +1,39 @@
 {% extends 'cards/base.html' %}
 
 {% block title %}
-Действия с картой
+Действия с записью
 {% endblock %}
 
 {% block content %}
-<h2>Действия с картой</h2>
+<h2>Действия с записью</h2>
 {% if a %}
 
-    <h3>{{ a.pk }} | карта № {{ a.number }} | серия {{ a.serie }} | статус {{ a.status }} | дата открытия
-        {{ a.enter_date }} | дата закрытия {{ a.end_date }}</h3>
-
+    <h3> R {{ a.radius }} | {{ a.shirina }} / {{ a.visota }} |
+        {{ a.mark }} | {{ a.note }} | {{ a.cost }}</h3>
+    {% if a.image %}
+        <img src="{{ a.image.url }}" style="max-height:200px">
+    {% endif %}
 {% endif %}
 {% if b %}
 
-    <h3>{{ b }}</h3>
+    <h1>{{ b }}</h1>
+
+{% endif %}
+{% if c %}
+
+    <h1>{{ c }}</h1>
 
 {% endif %}
 
-{% if s %}
-
-    <h3>{{ s }}</h3>
-
-{% endif %}
 
 <form method="post">
      {%  csrf_token %}
     <div>
-        <input type="submit" value="Удалить карту" name="status">
-        <input type="submit" value="Изменить статус карты" name="status">
+        <p><input  type="text" placeholder="новое описание" name="note_1"></p>
+        <p><input  type="text" placeholder="новая цена" name="cost"></p>
+        <input type="submit" value="Удалить запись" name="delete">
+        <input type="submit" value="Внести исправления" name="delete">
+
     </div>
 </form>
 

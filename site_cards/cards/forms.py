@@ -2,10 +2,10 @@ from django.core import validators
 from django.forms import ModelForm
 from django import forms
 
-from cards.models import Cards
+from cards.models import Shine
 
 
-class CardForm(ModelForm):
+class ShineForm(ModelForm):
     class Meta:
-        model = Cards
+        model = Shine
         fields = "__all__"

@@ -6,15 +6,15 @@
 
 {% block content %}
 
-<h1>Поиск карты</h1>
-<form method="post">
+<h1>Поиск шин</h1>
+<form method="post" enctype="multipart/form-data">
          {%  csrf_token %}
     <h4>
-        <input type="text" placeholder="Серия" name="Серия">
-        <input type="number"  placeholder="Номер" name="Номер">
-        <input type="text"  placeholder="Статус" name="Статус">
-
-    <input type="submit" value="Найти">
+        <input type="text" placeholder="радиус" name="radius">
+        <input type="text"  placeholder="ширина" name="shirina">
+        <input type="text"  placeholder="высота" name="visota">
+        <input type="date"  placeholder="дата" name="date">
+    <button type="submit">Поиск</button>
 
     </h4>
     </form>
@@ -22,9 +22,13 @@
 {% if a %}
     {% for i in a %}
 <div>
-    <h3><a href="{% url 'action' pk=i.pk %}"> {{ i.pk }} | карта № {{ i.number }} | серия {{ i.serie }} | статус {{ i.status }} | дата открытия
-        {{ i.enter_date }} | дата закрытия {{ i.end_date }}</a></h3>
+    <h3><a href="{% url 'action' pk=i.pk %}"> R {{ i.radius }} | {{ i.shirina }} / {{ i.visota }} |
+        {{ i.mark }} | {{ i.note }} | {{ i.enter_date }} | {{ i.cost }}<img src="{{ i.image.url }}" style="max-height:100px">
+    </a></h3>
+    <h4>____________________________________________________________________________________________</h4>
+
 </div>
+
     {% endfor %}
 
 {% else %}
