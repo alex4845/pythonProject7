@@ -9,13 +9,7 @@ from bs4 import BeautifulSoup as BS
 
 
 def main_page(request):
-    r = requests.get("https://www.kufar.by/user/3186887")
 
-    html = BS(r.content, 'html.parser')
-
-    for el in html.select(".styles_listing__Mqv2p.styles_listing__kroNh > .styles_content__oJf_D"):
-        title = el.select(".styles_title_wj__Y > a")
-        print(title[0].text)
     return render(request, 'cards/index.html')
 
 
@@ -83,5 +77,9 @@ def del_card(request, pk):
                 c = "Цена исправлена"
             a.save()
             return render(request, 'cards/action.html', {"a": a, "b": b, "c": c})
+
+def ubdate(request):
+    a = Shine(radius=radius, shirina=shirina,  )
+    pass
 
 
