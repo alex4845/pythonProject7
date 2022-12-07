@@ -23,8 +23,10 @@
     {% for i in a %}
 <div>
     <h3><a href="{% url 'action' pk=i.pk %}"> R {{ i.radius }} | {{ i.shirina }} / {{ i.visota }} |
-        {{ i.mark }} | {{ i.note }} | {{ i.enter_date }} | {{ i.cost }}<img src="{{ i.image.url }}" style="max-height:100px">
+        {{ i.mark }} | {{ i.note }} | {{ i.enter_date }} | {{ i.cost }}
+
     </a></h3>
+    <img src="{{ i.image.url }}" style="max-height:100px">
     <h4>____________________________________________________________________________________________</h4>
 
 </div>

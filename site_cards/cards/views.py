@@ -1,3 +1,6 @@
+import os
+
+from PIL import Image
 from django.db.models import Max
 from django.shortcuts import render, redirect
 from datetime import datetime, date, timedelta
@@ -79,7 +82,45 @@ def del_card(request, pk):
             return render(request, 'cards/action.html', {"a": a, "b": b, "c": c})
 
 def ubdate(request):
-    a = Shine(radius=radius, shirina=shirina,  )
-    pass
+    if request.method == "GET":
+        r = requests.get("https://www.kufar.by/user/3186887")
+        html = BS(r.content, 'html.parser')
+        c = html.select('.styles_wrapper__pb4qU')
+
+        for i in c:
+            p = i.get("href")
+            par = requests.get(p)
+            html_1 = BS(par.content, 'html.parser')
+            note = html_1.select('.styles_description_content__Lj7Ik')
+            parameters = []
+            a = Shine()
+            for i in note:
+                parameters.append(i.text)
+            sp = Shine.objects.filter(note=parameters[0])
+            if sp: continue
+            a.note = parameters[0]
+
+            imgs = html_1.select('.styles_slide__image__lc2v_')
+            s = 0
+            for i in imgs:
+                res = i.get("src")
+                im = requests.get(res, stream=True).content
+                if not os.path.exists('media/media/site_cards'):
+                    os.makedirs('media/media/site_cards')
+                with open('media/media/site_cards/' + res[49:59] + '.jpg', "wb") as handler:
+                    handler.write(im)
+                if s == 0:
+                    a.image = 'media/site_cards/' + res[49:59] + '.jpg'
+                # elif s == 1:
+                #     a.image_1 = 'media/site_cards/' + res[49:59] + '.jpg'
+                # elif s == 2:
+                #     a.image_2 = 'media/site_cards/' + res[49:59] + '.jpg'
+                s += 1
+                a.save()
+
+
+    return redirect('search')
+
+
 
 
