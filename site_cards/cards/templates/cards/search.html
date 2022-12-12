@@ -10,7 +10,7 @@
 <form method="post" enctype="multipart/form-data">
          {%  csrf_token %}
     <h4>
-        <input type="text" placeholder="радиус" name="radius">
+        <input type="text" placeholder="диаметр" name="radius">
         <input type="text"  placeholder="ширина" name="shirina">
         <input type="text"  placeholder="высота" name="visota">
         <input type="date"  placeholder="дата" name="date">
@@ -18,16 +18,23 @@
 
     </h4>
     </form>
+{% if b_1 %}
+     <h2>{{ b_1 }} {{ count }} всего объявлений {{ r_count }}</h2>
+{% endif %}
 
 {% if a %}
     {% for i in a %}
 <div>
-    <h3><a href="{% url 'action' pk=i.pk %}"> R {{ i.radius }} | {{ i.shirina }} / {{ i.visota }} |
-        {{ i.mark }} | {{ i.note }} | {{ i.enter_date }} | {{ i.cost }}
-
+    <h3><a href="{% url 'action' pk=i.pk %}">
+        {{ i.note }} | {{ i.enter_date }} | {{ i.cost }}
     </a></h3>
+
     <img src="{{ i.image.url }}" style="max-height:100px">
-    <h4>____________________________________________________________________________________________</h4>
+    <img src="{{ i.image_1.url }}" style="max-height:100px">
+    <img src="{{ i.image_2.url }}" style="max-height:100px">
+    <img src="{{ i.image_2.url }}" style="max-height:100px">
+    <h4>____________________________________________________________________________________________
+    </h4>
 
 </div>
 

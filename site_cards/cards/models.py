@@ -10,6 +10,9 @@ class Shine(models.Model):
     enter_date = models.DateField(auto_now_add=True, db_index=True)
     cost = models.CharField(max_length=20, blank=True)
     image = models.ImageField(upload_to="media/media/site_cards", blank=True, null=True)
+    image_1 = models.ImageField(upload_to="media/media/site_cards", blank=True, null=True)
+    image_2 = models.ImageField(upload_to="media/media/site_cards", blank=True, null=True)
+    image_3 = models.ImageField(upload_to="media/media/site_cards", blank=True, null=True)
 
     def __str__(self):
         return self.note
