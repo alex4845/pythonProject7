@@ -13,7 +13,7 @@
         <input type="text" placeholder="диаметр" name="radius">
         <input type="text"  placeholder="ширина" name="shirina">
         <input type="text"  placeholder="высота" name="visota">
-        <input type="date"  placeholder="дата" name="date">
+
     <button type="submit">Поиск</button>
 
     </h4>
@@ -26,13 +26,19 @@
     {% for i in a %}
 <div>
     <h3><a href="{% url 'action' pk=i.pk %}">
-        {{ i.note }} | {{ i.enter_date }} | {{ i.cost }}
+        {{ i.note }} | {{ i.short_note }} | {{ i.price }} | {{ i.company }}
     </a></h3>
 
     <img src="{{ i.image.url }}" style="max-height:100px">
+     {% if i.image_1 %}
     <img src="{{ i.image_1.url }}" style="max-height:100px">
+    {% endif %}
+    {% if i.image_2 %}
     <img src="{{ i.image_2.url }}" style="max-height:100px">
-    <img src="{{ i.image_2.url }}" style="max-height:100px">
+    {% endif %}
+    {% if i.image_3 %}
+        <img src="{{ i.image_3.url }}" style="max-height:100px">
+    {% endif %}
     <h4>____________________________________________________________________________________________
     </h4>
 

@@ -8,10 +8,13 @@
 <h2>Действия с записью</h2>
 {% if a %}
 
-    <h2>{{ a.note }} | {{ i.enter_date }} | {{ a.cost }}</h2>
-    {% if a.image %}
+    <h2>{{ a.note }} | {{ i.price }} | {{ a.company }}</h2>
+
         <img src="{{ a.image.url }}" style="max-height:500px">
         <img src="{{ a.image_1.url }}" style="max-height:500px">
+        <img src="{{ a.image_2.url }}" style="max-height:500px">
+    {% if a.image_3 %}
+        <img src="{{ a.image_3.url }}" style="max-height:500px">
     {% endif %}
 {% endif %}
 {% if b %}

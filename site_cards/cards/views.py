@@ -1,7 +1,5 @@
 import os
-
-from PIL import Image
-from django.db.models import Max
+import shutil
 from django.shortcuts import render, redirect
 from datetime import datetime, date, timedelta
 
@@ -38,22 +36,15 @@ def search(request):
          radius = request.POST["radius"]
          shirina = request.POST["shirina"]
          visota = request.POST["visota"]
-         date = request.POST["date"]
 
          if radius:
-             a = Shine.objects.filter(note__icontains='r' + radius)
-
+             a = Shine.objects.filter(short_note__icontains='r' + radius)
          elif radius and shirina:
              a = Shine.objects.filter(radius=radius, shirina=shirina)
-         elif radius:
-             a = Shine.objects.filter(radius=radius)
          elif shirina:
-             a = Shine.objects.filter(shirina=shirina)
+             a = Shine.objects.filter(short_note__contains=shirina)
          elif visota:
              a = Shine.objects.filter(visota=visota)
-         elif date:
-             a = Shine.objects.filter(enter_date=date)
-
          else:
              a = Shine.objects.all()
          b = "Шины с такими параметрами не обнаружены"
@@ -87,51 +78,62 @@ def del_card(request, pk):
 
 def ubdate(request):
     if request.method == "GET":
-        r = requests.get("https://www.kufar.by/user/3186887")
-        html = BS(r.content, 'html.parser')
-        c = html.select('.styles_wrapper__pb4qU')
-        count, r_count = 0, 0
-        for i in c:
-            p = i.get("href")
-            par = requests.get(p)
-            html_1 = BS(par.content, 'html.parser')
-            note = html_1.select('.styles_description_content__Lj7Ik')
-            parameters = []
-            a_1 = Shine()
-            r_count += 1
-
-            for i in note:
-                parameters.append(i.text)
-            sp = Shine.objects.filter(note=parameters[0])
-            if sp:
-                continue
-            count += 1
-            a_1.note = parameters[0]
-
-            imgs = html_1.select('.styles_slide__image__lc2v_')
-            s = 0
-            for i in imgs:
-                if s > 3: break
-                res = i.get("src")
-                im = requests.get(res, stream=True).content
-                if not os.path.exists('media/media/site_cards'):
-                    os.makedirs('media/media/site_cards')
-                with open('media/media/site_cards/' + res[49:59] + '.jpg', "wb") as handler:
-                    handler.write(im)
-                if s == 0:
-                    a_1.image = 'media/site_cards/' + res[49:59] + '.jpg'
-                elif s == 1:
-                    a_1.image_1 = 'media/site_cards/' + res[49:59] + '.jpg'
-                elif s == 2:
-                    a_1.image_2 = 'media/site_cards/' + res[49:59] + '.jpg'
-                elif s == 3:
-                    a_1.image_3 = 'media/site_cards/' + res[49:59] + '.jpg'
-                s += 1
-                a_1.save()
         a = Shine.objects.all()
-        b_1 = 'Получны новые данные! новых: '
+        a.delete()
+        shutil.rmtree('media/media/site_cards')
+        list = ["https://www.kufar.by/user/3186887",
+                "https://www.kufar.by/user/3558328"]
+        r_count = 0
+        for saller in list:
+            r = requests.get(saller)
+            html = BS(r.content, 'html.parser')
+            c = html.select('.styles_wrapper__pb4qU')
+            companys = html.select('.styles_pro-user-widget__info-title__7ejw5')
+
+            for i in c:
+                p = i.get("href")
+                par = requests.get(p)
+                html_1 = BS(par.content, 'html.parser')
+                note = html_1.select('.styles_description_content__Lj7Ik')
+                price = html_1.select('.styles_main__PU1v4')
+                short_note = html_1.select('.styles_title__zSN1V')
+                a_1 = Shine()
+                r_count += 1
+                for i in short_note:
+                    a_1.short_note = i.text
+                for i in note:
+                    a_1.note = i.text
+                #sp = Shine.objects.filter(note=parameters[0])
+                for i in companys:
+                    a_1.company = i.text
+                for i in price:
+                    a_1.price = i.text
+
+                imgs = html_1.select('.styles_slide__image__lc2v_')
+                s = 0
+                for i in imgs:
+                    if s > 3: break
+                    res = i.get("src")
+                    im = requests.get(res, stream=True).content
+                    if not os.path.exists('media/media/site_cards'):
+                        os.makedirs('media/media/site_cards')
+                    with open('media/media/site_cards/' + res[49:59] + '.jpg', "wb") as handler:
+                        handler.write(im)
+                    if s == 0:
+                        a_1.image = 'media/site_cards/' + res[49:59] + '.jpg'
+                    elif s == 1:
+                        a_1.image_1 = 'media/site_cards/' + res[49:59] + '.jpg'
+                    elif s == 2:
+                        a_1.image_2 = 'media/site_cards/' + res[49:59] + '.jpg'
+                    elif s == 3:
+                        a_1.image_3 = 'media/site_cards/' + res[49:59] + '.jpg'
+                    s += 1
+                    a_1.save()
+
+        a = Shine.objects.all()
+        b_1 = 'Получны новые данные! '
         return render(request, 'cards/search.html',
-                      {"a": a, "b_1": b_1, "count": count, "r_count": r_count})
+                      {"a": a, "b_1": b_1, "r_count": r_count})
     if request.method == "POST":
         return redirect('search')
 
