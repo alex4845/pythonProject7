@@ -79,8 +79,8 @@ def del_card(request, pk):
 def ubdate(request):
     if request.method == "GET":
         a = Shine.objects.all()
-        a.delete()
-        shutil.rmtree('media/media/site_cards')
+        a.delete()#очистка бд
+        shutil.rmtree('media/media/site_cards')#удаление фоток
         list = ["https://www.kufar.by/user/3186887",
                 "https://www.kufar.by/user/3558328"]
         r_count = 0
