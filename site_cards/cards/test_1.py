@@ -1,12 +1,11 @@
 from selenium import webdriver
-
 import time
 from selenium.webdriver.common.by import By
 
 driver = webdriver.Chrome()
 driver.get("https://www.kufar.by")
 time.sleep(2)
-click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[3]/div/div[2]/button""")
+click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[4]/div/div[2]/button""")
 click_1.click()#куки
 time.sleep(2)
 
@@ -29,15 +28,15 @@ for el in range(0, len(company)):
     print(name, "Количество страниц____________", n_p)
     n = 0
     for i in range(0, n_p):
-        print(i)
         wills = driver.find_elements(By.CLASS_NAME, "styles_wrapper__pb4qU")
         for will in wills:
             ss = will.get_attribute("href")
             short_note = will.find_element(By.CLASS_NAME, "styles_title__wj__Y")
+            price = will.find_element(By.CLASS_NAME, "styles_price__x_wGw")
             #print(ss)
             n += 1
             list.append(will.text)
-            print(n, short_note.text, name)
+            print(n, short_note.text, price.text, name)
         if i == n_p - 1: break
         elif i == 0:
             number = pag + """1]"""
@@ -45,7 +44,6 @@ for el in range(0, len(company)):
             number = pag + """4]"""
         else:
             number = pag + str(i + 2) + """]"""
-        print(number)
         driver.find_element(By.XPATH, number).click()
         time.sleep(2)
 print(len(list), "всего")
