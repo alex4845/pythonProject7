@@ -10,37 +10,26 @@
 <form method="post" enctype="multipart/form-data">
          {%  csrf_token %}
     <h4>
-        <input type="text" placeholder="диаметр" name="radius">
-        <input type="text"  placeholder="ширина" name="shirina">
-        <input type="text"  placeholder="высота" name="visota">
+        <input type="text" placeholder="поиск по описанию" name="radius">
+        <input type="text"  placeholder="ширина/высота/диаметр" name="shirina">
+        <input type="text"  placeholder="продавец" name="saler">
 
     <button type="submit">Поиск</button>
 
     </h4>
     </form>
 {% if b_1 %}
-     <h2>{{ b_1 }} {{ count }} всего объявлений {{ r_count }}</h2>
+     <h2>{{ b_1 }} всего объявлений {{ r_count }}</h2>
 {% endif %}
 
 {% if a %}
     {% for i in a %}
 <div>
-    <h3><a href="{% url 'action' pk=i.pk %}">
-        {{ i.note }} | {{ i.short_note }} | {{ i.price }} | {{ i.company }}
-    </a></h3>
+    <h4><a href="{% url 'action' pk=i.pk %}">
+        {{ i.number }} | {{ i.short_note }} | {{ i.price }} | {{ i.company }} | {{ i.index }}
 
-    <img src="{{ i.image.url }}" style="max-height:100px">
-     {% if i.image_1 %}
-    <img src="{{ i.image_1.url }}" style="max-height:100px">
-    {% endif %}
-    {% if i.image_2 %}
-    <img src="{{ i.image_2.url }}" style="max-height:100px">
-    {% endif %}
-    {% if i.image_3 %}
-        <img src="{{ i.image_3.url }}" style="max-height:100px">
-    {% endif %}
-    <h4>____________________________________________________________________________________________
-    </h4>
+    </a></h4>
+
 
 </div>
 

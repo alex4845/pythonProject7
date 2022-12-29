@@ -1,32 +1,50 @@
-import os
+
 import shutil
 from django.shortcuts import render, redirect
 from datetime import datetime, date, timedelta
 
 from cards.forms import ShineForm
 from cards.models import Shine
-import requests
-from bs4 import BeautifulSoup as BS
+from selenium import webdriver
+import time
+from selenium.webdriver.common.by import By
 
 
 def main_page(request):
 
     return render(request, 'cards/index.html')
 
-
-def add_card(request):
+def report(request):
     if request.method == "GET":
-        form = ShineForm()
-        return render(request, 'cards/add_card.html', {"form": form})
+        return render(request, 'cards/report.html')
 
     if request.method == "POST":
-        form = ShineForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            a = form
-            img_obj = form.instance
-        return render(request, 'cards/add_card.html', {"a": a, "img_obj": img_obj})
+        saler = request.POST["saler"]
+        if saler:
+            if saler == "все":
+                a = Shine.objects.all()
+            else:
+                a = Shine.objects.filter(company__icontains=saler)
+            byn_2 = 0
+            repid = []
+            for i in a:
+                pp = Shine.objects.filter(price=i.price, short_note=i.short_note, index=i.index)
+                if len(pp) >= 2:
+                    repid.append(i.number + ". " + i.price + i.short_note)
 
+                byn = i.price
+                byn_1 = ""
+                b = str(i.company)
+                for el in str(byn):
+                    if el.isdigit():
+                        byn_1 = byn_1 + el
+                    elif el == "р": break
+                if byn_1 == "": by = 0
+                else: by = int(byn_1)
+                byn_2 = byn_2 + by
+            if saler == "все": b = "всех продавцов"
+            return render(request, 'cards/report.html',
+                          {"b": b, "byn_2": byn_2, "repid": repid})
 
 def search(request):
      if request.method == "GET":
@@ -35,16 +53,13 @@ def search(request):
      if request.method == "POST":
          radius = request.POST["radius"]
          shirina = request.POST["shirina"]
-         visota = request.POST["visota"]
-
+         saler = request.POST["saler"]
          if radius:
-             a = Shine.objects.filter(short_note__icontains='r' + radius)
-         elif radius and shirina:
-             a = Shine.objects.filter(radius=radius, shirina=shirina)
+             a = Shine.objects.filter(short_note__icontains=radius)
          elif shirina:
-             a = Shine.objects.filter(short_note__contains=shirina)
-         elif visota:
-             a = Shine.objects.filter(visota=visota)
+             a = Shine.objects.filter(index__contains=shirina)
+         elif saler:
+             a = Shine.objects.filter(company__icontains=saler)
          else:
              a = Shine.objects.all()
          b = "Шины с такими параметрами не обнаружены"
@@ -80,62 +95,61 @@ def ubdate(request):
     if request.method == "GET":
         a = Shine.objects.all()
         a.delete()#очистка бд
-        shutil.rmtree('media/media/site_cards')#удаление фоток
-        list = ["https://www.kufar.by/user/3186887",
-                "https://www.kufar.by/user/3558328"]
-        r_count = 0
-        for saller in list:
-            r = requests.get(saller)
-            html = BS(r.content, 'html.parser')
-            c = html.select('.styles_wrapper__pb4qU')
-            companys = html.select('.styles_pro-user-widget__info-title__7ejw5')
+        #shutil.rmtree('media/media/site_cards')#удаление фоток
 
-            for i in c:
-                p = i.get("href")
-                par = requests.get(p)
-                html_1 = BS(par.content, 'html.parser')
-                note = html_1.select('.styles_description_content__Lj7Ik')
-                price = html_1.select('.styles_main__PU1v4')
-                short_note = html_1.select('.styles_title__zSN1V')
-                a_1 = Shine()
-                r_count += 1
-                for i in short_note:
-                    a_1.short_note = i.text
-                for i in note:
-                    a_1.note = i.text
-                #sp = Shine.objects.filter(note=parameters[0])
-                for i in companys:
-                    a_1.company = i.text
-                for i in price:
-                    a_1.price = i.text
+        driver = webdriver.Chrome()
+        driver.get("https://www.kufar.by")
+        time.sleep(2)
+        click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[4]/div/div[2]/button""")
+        click_1.click()  # куки
+        time.sleep(2)
 
-                imgs = html_1.select('.styles_slide__image__lc2v_')
-                s = 0
-                for i in imgs:
-                    if s > 3: break
-                    res = i.get("src")
-                    im = requests.get(res, stream=True).content
-                    if not os.path.exists('media/media/site_cards'):
-                        os.makedirs('media/media/site_cards')
-                    with open('media/media/site_cards/' + res[49:59] + '.jpg', "wb") as handler:
-                        handler.write(im)
-                    if s == 0:
-                        a_1.image = 'media/site_cards/' + res[49:59] + '.jpg'
-                    elif s == 1:
-                        a_1.image_1 = 'media/site_cards/' + res[49:59] + '.jpg'
-                    elif s == 2:
-                        a_1.image_2 = 'media/site_cards/' + res[49:59] + '.jpg'
-                    elif s == 3:
-                        a_1.image_3 = 'media/site_cards/' + res[49:59] + '.jpg'
-                    s += 1
+        company = ["3186887", "3558328", "5409979", "2938958"]
+        pag = """//*[@id="__next"]/div[1]/div[1]/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div[3]/div/div/a["""
+        list = []
+
+        for el in range(0, len(company)):
+            driver.get("https://www.kufar.by/user/" + company[el])
+            time.sleep(2)
+            category = driver.find_element(By.CLASS_NAME, "styles_chip__icon__fBw77")
+            category.click()
+            time.sleep(2)
+            choise = driver.find_element(By.XPATH, """//*[@id="mobile-categories"]/div/div/div[2]/button[2]""")
+            choise.click()
+            time.sleep(2)  # диски-шины
+            name_company = driver.find_element(By.CLASS_NAME, "styles_pro-user-widget__info-title__7ejw5")
+            name = str(name_company.text)
+            count_pages = driver.find_element(By.CLASS_NAME, "styles_pagination__inner__Jd_T_")
+            n_p = int(count_pages.text[-2] + count_pages.text[-1])
+            n = 0
+            for i in range(0, n_p):
+                wills = driver.find_elements(By.CLASS_NAME, "styles_wrapper__pb4qU")
+                for will in wills:
+                    ss = will.get_attribute("href")
+                    short_note = will.find_element(By.CLASS_NAME, "styles_title__wj__Y")
+                    price = will.find_element(By.CLASS_NAME, "styles_price__x_wGw")
+                    index = will.find_element(By.CLASS_NAME, "styles_parameters__baZ7_.styles_ellipsis__3MoMa")
+                    n += 1
+                    a_1 = Shine(href=ss, short_note=short_note.text, price=price.text,
+                                company=name, number=n, index=index.text)
                     a_1.save()
+                    list.append(will.text)
+                if i == n_p - 1:
+                    break
+                elif i == 0:
+                    number = pag + """1]"""
+                elif i >= 4:
+                    number = pag + """4]"""
+                else:
+                    number = pag + str(i + 2) + """]"""
+                driver.find_element(By.XPATH, number).click()
+                time.sleep(2)
 
-        a = Shine.objects.all()
+        r_count = len(list)
         b_1 = 'Получны новые данные! '
         return render(request, 'cards/search.html',
-                      {"a": a, "b_1": b_1, "r_count": r_count})
+                      {"b_1": b_1, "r_count": r_count})
     if request.method == "POST":
         return redirect('search')
-
 
 

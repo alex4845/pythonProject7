@@ -1,0 +1,36 @@
+{% extends 'cards/base.html' %}
+
+{% block title %}
+Добавить карту
+{% endblock %}
+
+{% block content %}
+<h1>Получение различных данных</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+    {%  csrf_token %}
+    <h4>
+        <input type="text" placeholder="продавец" name="saler">
+    </h4>
+
+    <input type="submit" value="Получить данные">
+
+</form>
+
+{% if byn_2 %}
+
+    <h3>На складе у {{ b }} шин на сумму {{ byn_2 }} рублей</h3>
+
+{% endif %}
+{% if repid %}
+    <h3>Повторы:</h3>
+    {% for i in repid %}
+        <h3> {{ i }} </h3>
+    {% endfor %}
+{% else %}
+    <h3>Нет повторов</h3>
+{% endif %}
+
+
+{% endblock %}
