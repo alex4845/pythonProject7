@@ -1,5 +1,7 @@
 
 import shutil
+
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from datetime import datetime, date, timedelta
 
@@ -30,8 +32,9 @@ def report(request):
             for i in a:
                 pp = Shine.objects.filter(price=i.price, short_note=i.short_note, index=i.index)
                 if len(pp) >= 2:
-                    repid.append(i.number + ". " + i.price + i.short_note)
-
+                    for e in pp:
+                        repid.append(e.number)
+                    repid.append(i.short_note)
                 byn = i.price
                 byn_1 = ""
                 b = str(i.company)
@@ -43,6 +46,7 @@ def report(request):
                 else: by = int(byn_1)
                 byn_2 = byn_2 + by
             if saler == "все": b = "всех продавцов"
+
             return render(request, 'cards/report.html',
                           {"b": b, "byn_2": byn_2, "repid": repid})
 
@@ -55,11 +59,15 @@ def search(request):
          shirina = request.POST["shirina"]
          saler = request.POST["saler"]
          if radius:
-             a = Shine.objects.filter(short_note__icontains=radius)
+             a = Shine.objects.filter(
+                 Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
+                 )
          elif shirina:
              a = Shine.objects.filter(index__contains=shirina)
          elif saler:
-             a = Shine.objects.filter(company__icontains=saler)
+             a = Shine.objects.filter(
+                 Q(company__iregex=saler) | Q(company__iregex=saler)
+                 )
          else:
              a = Shine.objects.all()
          b = "Шины с такими параметрами не обнаружены"
