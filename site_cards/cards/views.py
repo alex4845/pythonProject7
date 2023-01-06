@@ -26,10 +26,11 @@ def report(request):
             if saler == "все":
                 a = Shine.objects.all()
             else:
-                a = Shine.objects.filter(company__icontains=saler)
-            byn_2 = 0
-            repid = []
+                a = Shine.objects.filter(
+                    Q(company__iregex=saler) | Q(company__iregex=saler))
+            repid, b, byn_2 = [], "", 0
             for i in a:
+                if int(i.number) == 1: b = str(i.company)
                 pp = Shine.objects.filter(price=i.price, short_note=i.short_note, index=i.index)
                 if len(pp) >= 2:
                     for e in pp:
@@ -37,7 +38,6 @@ def report(request):
                     repid.append(i.short_note)
                 byn = i.price
                 byn_1 = ""
-                b = str(i.company)
                 for el in str(byn):
                     if el.isdigit():
                         byn_1 = byn_1 + el
