@@ -58,7 +58,11 @@ def search(request):
          radius = request.POST["radius"]
          shirina = request.POST["shirina"]
          saler = request.POST["saler"]
-         if radius:
+         if radius and shirina:
+             a = Shine.objects.filter(
+                 Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
+             ).filter(index__contains=shirina)
+         elif radius:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
                  )
@@ -106,15 +110,16 @@ def ubdate(request):
         #shutil.rmtree('media/media/site_cards')#удаление фоток
 
         driver = webdriver.Chrome()
-        driver.get("https://www.kufar.by")
+        driver.get("https://www.kufar.by/user/3186887")
         time.sleep(2)
-        click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[4]/div/div[2]/button""")
+        click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[3]/div/div[2]/button""")
         click_1.click()  # куки
         time.sleep(2)
 
         company = ["3186887", "3558328", "5409979", "2938958"]
         pag = """//*[@id="__next"]/div[1]/div[1]/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div[3]/div/div/a["""
         list = []
+        time_0 = datetime.today()
 
         for el in range(0, len(company)):
             driver.get("https://www.kufar.by/user/" + company[el])
@@ -155,8 +160,9 @@ def ubdate(request):
 
         r_count = len(list)
         b_1 = 'Получны новые данные! '
+        time_1 = datetime.today() - time_0
         return render(request, 'cards/search.html',
-                      {"b_1": b_1, "r_count": r_count})
+                      {"b_1": b_1, "r_count": r_count, "time_1": time_1})
     if request.method == "POST":
         return redirect('search')
 
