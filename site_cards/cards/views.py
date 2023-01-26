@@ -28,8 +28,9 @@ def report(request):
             else:
                 a = Shine.objects.filter(
                     Q(company__iregex=saler) | Q(company__iregex=saler))
-            repid, b, byn_2 = [], "", 0
+            repid, b, byn_2, count = [], "", 0, 0
             for i in a:
+                count += 1
                 if int(i.number) == 1: b = str(i.company)
                 pp = Shine.objects.filter(price=i.price, short_note=i.short_note, index=i.index)
                 if len(pp) >= 2:
@@ -48,7 +49,7 @@ def report(request):
             if saler == "все": b = "всех продавцов"
 
             return render(request, 'cards/report.html',
-                          {"b": b, "byn_2": byn_2, "repid": repid})
+                          {"b": b, "byn_2": byn_2, "repid": repid, "count": count})
 
 def search(request):
      if request.method == "GET":
@@ -75,33 +76,14 @@ def search(request):
          else:
              a = Shine.objects.all()
          b = "Шины с такими параметрами не обнаружены"
-         return render(request, 'cards/search.html', {"a": a, "b": b})
+         return render(request, 'cards/search.html', {"a": a, "b": b, "radius": radius})
 
 
 def del_card(request, pk):
     a = Shine.objects.get(pk=pk)
     if request.method == "GET":
         return render(request, 'cards/action.html', {"a": a})
-    if request.method == "POST":
-        if request.POST["delete"] == "Удалить запись":
-            a.image.delete(save=True)
-            a.image_1.delete(save=True)
-            a.image_2.delete(save=True)
-            a.image_3.delete(save=True)
-            a.delete()
-            b = "Запись удалена!"
-            return render(request, 'cards/action.html', {"b": b})
 
-        if request.POST["delete"] == "Внести исправления":
-            c, b = "", ""
-            if request.POST["note_1"]:
-                a.note = request.POST["note_1"]
-                b = "Примечание исправлено"
-            if request.POST["cost"]:
-                a.cost = request.POST["cost"]
-                c = "Цена исправлена"
-            a.save()
-            return render(request, 'cards/action.html', {"a": a, "b": b, "c": c})
 
 def ubdate(request):
     if request.method == "GET":
@@ -111,10 +93,10 @@ def ubdate(request):
 
         driver = webdriver.Chrome()
         driver.get("https://www.kufar.by/user/3186887")
-        time.sleep(2)
-        click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[3]/div/div[2]/button""")
+        time.sleep(5)
+        click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[4]/div/div[2]/button""")
         click_1.click()  # куки
-        time.sleep(2)
+        time.sleep(3)
 
         company = ["3186887", "3558328", "5409979", "2938958"]
         pag = """//*[@id="__next"]/div[1]/div[1]/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div[3]/div/div/a["""
@@ -123,13 +105,13 @@ def ubdate(request):
 
         for el in range(0, len(company)):
             driver.get("https://www.kufar.by/user/" + company[el])
-            time.sleep(2)
+            time.sleep(3)
             category = driver.find_element(By.CLASS_NAME, "styles_chip__icon__fBw77")
             category.click()
-            time.sleep(2)
+            time.sleep(3)
             choise = driver.find_element(By.XPATH, """//*[@id="mobile-categories"]/div/div/div[2]/button[2]""")
             choise.click()
-            time.sleep(2)  # диски-шины
+            time.sleep(3)  # диски-шины
             name_company = driver.find_element(By.CLASS_NAME, "styles_pro-user-widget__info-title__7ejw5")
             name = str(name_company.text)
             count_pages = driver.find_element(By.CLASS_NAME, "styles_pagination__inner__Jd_T_")
@@ -156,7 +138,7 @@ def ubdate(request):
                 else:
                     number = pag + str(i + 2) + """]"""
                 driver.find_element(By.XPATH, number).click()
-                time.sleep(2)
+                time.sleep(3)
 
         r_count = len(list)
         b_1 = 'Получны новые данные! '

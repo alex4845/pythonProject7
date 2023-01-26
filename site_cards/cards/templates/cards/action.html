@@ -8,33 +8,11 @@
 <h2>Действия с записью</h2>
 {% if a %}
 
-    <h2>{{ a.short_note }} | {{ a.price }} | {{ a.company }}</h2>
-    <h4><a href="{{ a.href }}">{{ a.href }}</a> </h4>
+    <h3>{{ a.short_note }} | {{ a.price }} | {{ a.company }}</h3>
+    <h3><a href="{{ a.href }}">ссылка на объявление</a> </h3>
 
 
 {% endif %}
-{% if b %}
-
-    <h1>{{ b }}</h1>
-
-{% endif %}
-{% if c %}
-
-    <h1>{{ c }}</h1>
-
-{% endif %}
-
-
-<form method="post">
-     {%  csrf_token %}
-    <div>
-        <p><input  type="text" placeholder="новое описание" name="note_1"></p>
-        <p><input  type="text" placeholder="новая цена" name="cost"></p>
-        <input type="submit" value="Удалить запись" name="delete">
-        <input type="submit" value="Внести исправления" name="delete">
-
-    </div>
-</form>
 
 
 {% endblock %}
