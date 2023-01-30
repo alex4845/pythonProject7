@@ -1,5 +1,5 @@
-
-import shutil
+import re
+import requests
 
 from django.db.models import Q
 from django.shortcuts import render, redirect
@@ -32,7 +32,7 @@ def report(request):
             for i in a:
                 count += 1
                 if int(i.number) == 1: b = str(i.company)
-                pp = Shine.objects.filter(price=i.price, short_note=i.short_note, index=i.index)
+                pp = Shine.objects.filter(href=i.href)
                 if len(pp) >= 2:
                     for e in pp:
                         repid.append(e.number)
@@ -58,6 +58,8 @@ def search(request):
      if request.method == "POST":
          radius = request.POST["radius"]
          shirina = request.POST["shirina"]
+         visota = request.POST["visota"]
+         diametr = request.POST["diametr"]
          saler = request.POST["saler"]
          if radius and shirina:
              a = Shine.objects.filter(
@@ -67,8 +69,12 @@ def search(request):
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
                  )
+         elif shirina and visota:
+             a = Shine.objects.filter(shirina__contains=shirina).filter(visota__contains=visota)
          elif shirina:
-             a = Shine.objects.filter(index__contains=shirina)
+             a = Shine.objects.filter(shirina__contains=shirina)
+         elif diametr:
+             a = Shine.objects.filter(diametr__contains=diametr)
          elif saler:
              a = Shine.objects.filter(
                  Q(company__iregex=saler) | Q(company__iregex=saler)
@@ -91,60 +97,60 @@ def ubdate(request):
         a.delete()#очистка бд
         #shutil.rmtree('media/media/site_cards')#удаление фоток
 
-        driver = webdriver.Chrome()
-        driver.get("https://www.kufar.by/user/3186887")
-        time.sleep(5)
-        click_1 = driver.find_element(By.XPATH, """//*[@id="__next"]/div[4]/div/div[2]/button""")
-        click_1.click()  # куки
-        time.sleep(3)
+        l_3 = []
+        company = ["3186887", "3558328", "5409979", "2938958", "2938958(2)"]
+        for xx in company:
+            if xx == company[-1]:
+                a = requests.get(
+                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort="
+                    "lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzMzNDAyNTQwMDB9LHsibiI6ImFkX2lkIiwidiI6MTc2NDY0NjUyfV0sImYiOnRydWV9")
+            else:
+                a = requests.get(
+                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
 
-        company = ["3186887", "3558328", "5409979", "2938958"]
-        pag = """//*[@id="__next"]/div[1]/div[1]/div[2]/div/div/div[1]/div[2]/div[2]/div/div/div[3]/div/div/a["""
-        list = []
-        time_0 = datetime.today()
-
-        for el in range(0, len(company)):
-            driver.get("https://www.kufar.by/user/" + company[el])
-            time.sleep(3)
-            category = driver.find_element(By.CLASS_NAME, "styles_chip__icon__fBw77")
-            category.click()
-            time.sleep(3)
-            choise = driver.find_element(By.XPATH, """//*[@id="mobile-categories"]/div/div/div[2]/button[2]""")
-            choise.click()
-            time.sleep(3)  # диски-шины
-            name_company = driver.find_element(By.CLASS_NAME, "styles_pro-user-widget__info-title__7ejw5")
-            name = str(name_company.text)
-            count_pages = driver.find_element(By.CLASS_NAME, "styles_pagination__inner__Jd_T_")
-            n_p = int(count_pages.text[-2] + count_pages.text[-1])
-            n = 0
-            for i in range(0, n_p):
-                wills = driver.find_elements(By.CLASS_NAME, "styles_wrapper__pb4qU")
-                for will in wills:
-                    ss = will.get_attribute("href")
-                    short_note = will.find_element(By.CLASS_NAME, "styles_title__wj__Y")
-                    price = will.find_element(By.CLASS_NAME, "styles_price__x_wGw")
-                    index = will.find_element(By.CLASS_NAME, "styles_parameters__baZ7_.styles_ellipsis__3MoMa")
-                    n += 1
-                    a_1 = Shine(href=ss, short_note=short_note.text, price=price.text,
-                                company=name, number=n, index=index.text)
-                    a_1.save()
-                    list.append(will.text)
-                if i == n_p - 1:
-                    break
-                elif i == 0:
-                    number = pag + """1]"""
-                elif i >= 4:
-                    number = pag + """4]"""
-                else:
-                    number = pag + str(i + 2) + """]"""
-                driver.find_element(By.XPATH, number).click()
-                time.sleep(3)
-
-        r_count = len(list)
+            s, l_1 = 0, []
+            param = ['(,"subject":"..........................................................)',
+                     '(price_byn":"......)', '(рина","vl":"...)', '(сота","vl":"...)',
+                     '(метр","vl":"...)', '(езон","vl":".............)', '("name","v":".......................)']
+            for i in re.split("auto.kufar", a.text):
+                l_2 = []
+                for y in range(0, len(param)):
+                    aa = str(re.findall(param[y], i))
+                    res = ""
+                    for x in aa[14:]:
+                        if x == '"' or x == "'":
+                            break
+                        res = res + x
+                    if y == 1: res = res[:-2]
+                    l_2.append(res)
+                l_2.insert(0, "https://auto.kufar" + i[:16])
+                l_2.insert(0, s)
+                s += 1
+                l_1.append(l_2)
+                if l_1[-1][-1] == "":
+                    l_1[-1][-1] = l_1[-2][-1]
+            del l_1[0]
+            l_3.append(l_1)
+        l_3[3] = l_3[3] + l_3[4]
+        del l_3[4]
+        for el in l_3[3][:200]:
+            for elem in l_3[3][200:]:
+                if elem[1] == el[1]:
+                    del l_3[3][l_3[3].index(elem)]
+        ss = 0
+        for i in l_3[3]:
+            ss += 1
+            i[0] = ss
+        for yy in l_3:
+            for xx in yy:
+                a_1 = Shine(number=xx[0], href=xx[1], company=xx[8], shirina=xx[4], visota=xx[5],
+                            diametr=xx[6], price=xx[3], short_note=xx[2])
+                a_1.save()
+        r_count = len(l_3[0]) + len(l_3[1]) + len(l_3[2]) + len(l_3[3])
         b_1 = 'Получны новые данные! '
-        time_1 = datetime.today() - time_0
+
         return render(request, 'cards/search.html',
-                      {"b_1": b_1, "r_count": r_count, "time_1": time_1})
+                      {"b_1": b_1, "r_count": r_count})
     if request.method == "POST":
         return redirect('search')
 

@@ -1,35 +1,59 @@
 import re
-
 import requests
-from bs4 import BeautifulSoup, SoupStrainer
-
-a = requests.get("https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=132&atid=3186887&cat=2075&cmp=1&sort=lst.d")
 
 
-print(a.text)
-# s = 0
-# for i in re.findall('(https://[\S]+)', a.text):
-#     s += 1
-#     print(i[:34])
-# print(s)
-s, l_1 = 0, []
-for i in re.findall('(subject":"....................................)', a.text):
-    s += 1
-    res, l_2 = "", []
-    for y in i[10:]:
-        if y == '"': break
-        res = res + y
-    l_2.append(s)
-    l_2.append(res)
-    l_1.append(l_2)
+l_3 = []
+company = ["3186887", "3558328", "5409979", "2938958", "2938958(2)"]
+for xx in company:
+   if xx == company[-1]:
+      a = requests.get("https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort="
+                       "lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzMzNDAyNTQwMDB9LHsibiI6ImFkX2lkIiwidiI6MTc2NDY0NjUyfV0sImYiOnRydWV9")
+   else:
+      a = requests.get(
+         "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
 
-s = 0
-for i in re.findall('(price_byn":"......)', a.text):
-    res = ""
-    for y in i[12:]:
-        if y == '"': break
-        res = res + y
-    l_1[s].append(res[:-2] + " руб")
-    s += 1
+   s, l_1 = 0, []
+   param = ['(,"subject":"..........................................................)',
+            '(price_byn":"......)', '(рина","vl":"...)', '(сота","vl":"...)',
+            '(метр","vl":"...)', '(езон","vl":".............)', '("name","v":".......................)']
 
-print(l_1)
+   for i in re.split("auto.kufar", a.text):
+      l_2 = []
+      for y in range(0, len(param)):
+         aa = str(re.findall(param[y], i))
+         res = ""
+         for x in aa[14:]:
+            if x == '"' or x == "'":
+               break
+            res = res + x
+         if y == 1: res = res[:-2]
+         l_2.append(res)
+      l_2.insert(0, "https://auto.kufar" + i[:16])
+      l_2.insert(0, s)
+      s += 1
+      l_1.append(l_2)
+      if l_1[-1][-1] == "":
+         l_1[-1][-1] = l_1[-2][-1]
+
+   del l_1[0]
+   l_3.append(l_1)
+
+l_3[3] = l_3[3] + l_3[4]
+del l_3[4]
+
+for el in l_3[3][:200]:
+   for elem in l_3[3][200:]:
+      if elem[1] == el[1]:
+         del l_3[3][l_3[3].index(elem)]
+ss = 0
+for i in l_3[3]:
+   ss += 1
+   i[0] = ss
+
+for yy in l_3:
+   for xx in yy:
+      print(xx)
+
+
+
+

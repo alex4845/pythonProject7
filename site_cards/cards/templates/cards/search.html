@@ -13,7 +13,9 @@
 
     <h4>
         <input type="text" placeholder="описание" name="radius">
-        <input type="text"  placeholder="ширина/высота/диаметр" name="shirina">
+        <input type="text"  placeholder="ширина" name="shirina">
+        <input type="text"  placeholder="высота" name="visota">
+        <input type="text"  placeholder="диаметр" name="diametr">
         <input type="text"  placeholder="продавец" name="saler">
 
     <button type="submit">Поиск</button>
@@ -22,14 +24,14 @@
     </form>
 {% if b_1 %}
     <h2>{{ b_1 }} Всего объявлений: {{ r_count }}</h2>
-    <h3>время загрузки: {{ time_1 }}</h3>
+
 {% endif %}
 
 {% if a %}
     {% for i in a %}
 <div>
     <h4><a href="{% url 'action' pk=i.pk %}">
-        {{ i.number }} | {{ i.short_note }} | {{ i.price }} | {{ i.company }} | {{ i.index }}
+        {{ i.number }} | {{ i.short_note }} | {{ i.price }} руб | {{ i.company }}
 
     </a></h4>
 
