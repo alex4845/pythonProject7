@@ -1,20 +1,23 @@
 import re
 import requests
+import datetime
+from datetime import datetime
 
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from datetime import datetime, date, timedelta
 
 from cards.forms import ShineForm
 from cards.models import Shine
-from selenium import webdriver
-import time
-from selenium.webdriver.common.by import By
+
 
 
 def main_page(request):
+    now = datetime.now()
+    a = now.strftime("%H:%M:%S")
+    # if a > "16:00:00":
+    #     ubdate(request)
 
-    return render(request, 'cards/index.html')
+    return render(request, 'cards/index.html', {"a": a})
 
 def report(request):
     if request.method == "GET":
@@ -61,10 +64,10 @@ def search(request):
          visota = request.POST["visota"]
          diametr = request.POST["diametr"]
          saler = request.POST["saler"]
-         if radius and shirina:
+         if radius and diametr:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
-             ).filter(index__contains=shirina)
+             ).filter(diametr__contains=diametr)
          elif radius:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
@@ -81,6 +84,7 @@ def search(request):
                  )
          else:
              a = Shine.objects.all()
+
          b = "Шины с такими параметрами не обнаружены"
          return render(request, 'cards/search.html', {"a": a, "b": b, "radius": radius})
 
@@ -102,8 +106,7 @@ def ubdate(request):
         for xx in company:
             if xx == company[-1]:
                 a = requests.get(
-                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort="
-                    "lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzMzNDAyNTQwMDB9LHsibiI6ImFkX2lkIiwidiI6MTc2NDY0NjUyfV0sImYiOnRydWV9")
+                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzU2NTQ5MjUwMDB9LHsibiI6ImFkX2lkIiwidiI6MTYwMjI2NTM0fV0sImYiOnRydWV9")
             else:
                 a = requests.get(
                     "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
@@ -131,6 +134,7 @@ def ubdate(request):
                     l_1[-1][-1] = l_1[-2][-1]
             del l_1[0]
             l_3.append(l_1)
+
         l_3[3] = l_3[3] + l_3[4]
         del l_3[4]
         for el in l_3[3][:200]:
@@ -148,9 +152,10 @@ def ubdate(request):
                 a_1.save()
         r_count = len(l_3[0]) + len(l_3[1]) + len(l_3[2]) + len(l_3[3])
         b_1 = 'Получны новые данные! '
+        time = datetime.now()
 
         return render(request, 'cards/search.html',
-                      {"b_1": b_1, "r_count": r_count})
+                      {"b_1": b_1, "r_count": r_count, "time": time})
     if request.method == "POST":
         return redirect('search')
 

@@ -23,7 +23,7 @@
 
     </form>
 {% if b_1 %}
-    <h2>{{ b_1 }} Всего объявлений: {{ r_count }}</h2>
+    <h2>{{ b_1 }} Всего объявлений: {{ r_count }} Время обновления {{ time }}</h2>
 
 {% endif %}
 
@@ -31,7 +31,8 @@
     {% for i in a %}
 <div>
     <h4><a href="{% url 'action' pk=i.pk %}">
-        {{ i.number }} | {{ i.short_note }} | {{ i.price }} руб | {{ i.company }}
+        {{ i.number }} | {{ i.short_note }} | {{ i.price }} руб | {{ i.shirina }}
+         / {{ i.visota }} {{ i.diametr }} | {{ i.company }}
 
     </a></h4>
 
