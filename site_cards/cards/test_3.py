@@ -3,14 +3,16 @@ import requests
 
 
 l_3 = []
-company = ["3186887", "3558328", "5409979", "2938958", "2938958(2)"]
+company = ["3186887", "3558328", "5409979", "2938958", "",  "2938958(2)"]
 for xx in company:
-   if xx == company[-1]:
-      a = requests.get("https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort="
-                       "lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzMzNDAyNTQwMDB9LHsibiI6ImFkX2lkIiwidiI6MTc2NDY0NjUyfV0sImYiOnRydWV9")
+   if xx == company[-2]:
+      a = requests.get(
+         "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzU2NTQ5NjUwMDB9LHsibiI6ImFkX2lkIiwidiI6MTcyNzQwMDIxfV0sImYiOnRydWV9")
+   elif xx == company[-1]:
+      a = requests.get("https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9")
    else:
       a = requests.get(
-         "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
+         "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
 
    s, l_1 = 0, []
    param = ['(,"subject":"..........................................................)',
@@ -38,13 +40,16 @@ for xx in company:
    del l_1[0]
    l_3.append(l_1)
 
-l_3[3] = l_3[3] + l_3[4]
-del l_3[4]
+l_3[3] = l_3[3] + l_3[4] + l_3[5]
+del l_3[4:]
+for el in l_3[3]:
+   count = 0
+   for elem in l_3[3]:
 
-for el in l_3[3][:200]:
-   for elem in l_3[3][200:]:
       if elem[1] == el[1]:
-         del l_3[3][l_3[3].index(elem)]
+         count += 1
+         if count > 1:
+            del l_3[3][l_3[3].index(elem)]
 ss = 0
 for i in l_3[3]:
    ss += 1
