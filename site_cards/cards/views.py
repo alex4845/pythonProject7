@@ -32,9 +32,12 @@ def report(request):
                 a = Shine.objects.filter(
                     Q(company__iregex=saler) | Q(company__iregex=saler))
             repid, b, byn_2, count = [], "", 0, 0
+            count_B17 = 0
             for i in a:
                 count += 1
                 if int(i.number) == 1: b = str(i.company)
+                elif "Б17" in i.short_note:
+                    count_B17 += 1
                 pp = Shine.objects.filter(href=i.href)
                 if len(pp) >= 2:
                     for e in pp:
@@ -52,7 +55,8 @@ def report(request):
             if saler == "все": b = "всех продавцов"
 
             return render(request, 'cards/report.html',
-                          {"b": b, "byn_2": byn_2, "repid": repid, "count": count})
+                          {"b": b, "byn_2": byn_2, "repid": repid,
+                           "count": count, "count_B17": count_B17})
 
 def search(request):
      if request.method == "GET":
