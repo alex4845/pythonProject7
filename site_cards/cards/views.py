@@ -110,7 +110,7 @@ def ubdate(request):
         for xx in company:
             if xx == company[-2]:
                 a = requests.get(
-                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzU2NTQ5NjUwMDB9LHsibiI6ImFkX2lkIiwidiI6MTcyNzQwMDIxfV0sImYiOnRydWV9")
+                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzU2NTUwMTUwMDB9LHsibiI6ImFkX2lkIiwidiI6MTc3MjMxMjY1fV0sImYiOnRydWV9")
             elif xx == company[-1]:
                 a = requests.get(
                     "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9")
@@ -143,7 +143,9 @@ def ubdate(request):
             l_3.append(l_1)
 
         l_3[3] = l_3[3] + l_3[4] + l_3[5]
+
         del l_3[4:]
+
         for el in l_3[3]:
             count = 0
             for elem in l_3[3]:
@@ -151,6 +153,7 @@ def ubdate(request):
                     count += 1
                     if count > 1:
                         del l_3[3][l_3[3].index(elem)]
+
         ss = 0
         for i in l_3[3]:
             ss += 1
