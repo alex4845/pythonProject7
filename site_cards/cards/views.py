@@ -106,11 +106,11 @@ def ubdate(request):
         #shutil.rmtree('media/media/site_cards')#удаление фоток
 
         l_3 = []
-        company = ["3186887", "3558328", "5409979", "2938958", "", "2938958(2)"]
+        company = ["3186887", "3558328", "5409979", "2938958", "2938958(1)", "2938958(2)"]
         for xx in company:
             if xx == company[-2]:
                 a = requests.get(
-                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2NzU2NTUwMTUwMDB9LHsibiI6ImFkX2lkIiwidiI6MTc3MjMxMjY1fV0sImYiOnRydWV9")
+                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2Nzk3MTg1MjIwMDB9LHsibiI6ImFkX2lkIiwidiI6MTU3NDIzNzg5fV0sImYiOnRydWV9")
             elif xx == company[-1]:
                 a = requests.get(
                     "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9")
