@@ -110,10 +110,10 @@ def ubdate(request):
         for xx in company:
             if xx == company[-2]:
                 a = requests.get(
-                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2Nzk3MTg1MjIwMDB9LHsibiI6ImFkX2lkIiwidiI6MTU3NDIzNzg5fV0sImYiOnRydWV9")
+                    "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2ODM2OTMyMDMwMDB9LHsibiI6ImFkX2lkIiwidiI6MTgzMjMyMzYxfV0sImYiOnRydWV9")
             elif xx == company[-1]:
                 a = requests.get(
-                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9")
+                    "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=300&atid=2938958&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9")
             else:
                 a = requests.get(
                     "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
