@@ -1,16 +1,18 @@
 import re
 import requests
-#, "5409979", "887851"
-l_3, l_4 = [], []
-company = ["3186887", "3558328"]
 
+l_3 = []
+company = ["3186887", "3558328", "5409979", "887851"]
 def pars_company(xx):
+
     request1 = "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d"
     request2 = "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=100&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9"
     request_list = [request1, request2]
     if xx == "3186887" or xx == "5409979":
         request_list = [request1]
+    c = 0
     for aa in request_list:
+        c += 1
         a = requests.get(aa)
         s, l_1 = 0, []
         param = ['(,"subject":"..........................................................)',
@@ -35,29 +37,37 @@ def pars_company(xx):
             if l_1[-1][-1] == "":
                 l_1[-1][-1] = l_1[-2][-1]
         del l_1[0]
+
         l_3.append(l_1)
-    if len(request_list) > 1:
-        l_3[0] = l_3[0] + l_3[1]
-        for el in l_3[0]:
-            count = 0
-            for elem in l_3[0]:
-                if elem[1] == el[1]:
-                    count += 1
-                    if count > 1:
-                        del l_3[0][l_3[0].index(elem)]
 
-        ss = 0
-        for i in l_3[0]:
-            ss += 1
-            i[0] = ss
-    #print(l_3)
-    return l_3
+        if c == 2:
+            l_3[-1] = l_3[-2] + l_1
+            for el in l_3[-1]:
+                count = 0
+                for elem in l_3[-1]:
+                    if elem[1] == el[1]:
+                        count += 1
+                        if count > 1:
+                            del l_3[-1][l_3[-1].index(elem)]
 
-#pars_company("887851")
+            del l_3[-2]
+            ss = 0
+            for i in l_3[-1]:
+                ss += 1
+                i[0] = ss
+
+
+
 for xx in company:
     pars_company(xx)
-    l_4.append(l_3)
-    print(l_3)
+
+for ii in l_3:
+    print(ii)
+
+
+
+
+
 
 
 

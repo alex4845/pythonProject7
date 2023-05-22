@@ -31,18 +31,15 @@ def report(request):
             else:
                 a = Shine.objects.filter(
                     Q(company__iregex=saler) | Q(company__iregex=saler))
-            repid, b, byn_2, count = [], "", 0, 0
+            b, byn_2, count = "", 0, 0
             count_B17 = 0
             for i in a:
                 count += 1
                 if int(i.number) == 1: b = str(i.company)
                 elif "Б17" in i.short_note:
                     count_B17 += 1
-                pp = Shine.objects.filter(href=i.href)
-                if len(pp) >= 2:
-                    for e in pp:
-                        repid.append(e.number)
-                    repid.append(i.short_note)
+
+
                 byn = i.price
                 byn_1 = ""
                 for el in str(byn):
@@ -55,8 +52,7 @@ def report(request):
             if saler == "все": b = "всех продавцов"
 
             return render(request, 'cards/report.html',
-                          {"b": b, "byn_2": byn_2, "repid": repid,
-                           "count": count, "count_B17": count_B17})
+                          {"b": b, "byn_2": byn_2, "count": count, "count_B17": count_B17})
 
 def search(request):
      if request.method == "GET":
@@ -71,7 +67,7 @@ def search(request):
          if radius and diametr:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
-             ).filter(diametr__contains=diametr)
+             ).filter(short_note__contains=diametr)
          elif radius:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
@@ -106,64 +102,71 @@ def ubdate(request):
         #shutil.rmtree('media/media/site_cards')#удаление фоток
 
         l_3 = []
-        company = ["3186887", "3558328", "5409979", "2938958", "2938958(1)", "2938958(2)"]
+        company = ["3186887", "3558328", "5409979", "887851"]
+        def pars_company(xx):
+            request1 = "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d"
+            request2 = "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=100&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9"
+            request_list = [request1, request2]
+            if xx == "3186887" or xx == "5409979":
+                request_list = [request1]
+            c = 0
+            for aa in request_list:
+                c += 1
+                a = requests.get(aa)
+                s, l_1 = 0, []
+                param = ['(,"subject":"..........................................................)',
+                         '(price_byn":"......)', '(рина","vl":"...)', '(сота","vl":"...)',
+                         '(метр","vl":"...)', '(езон","vl":".............)', '("name","v":".......................)']
+                for i in re.split("auto.kufar", a.text):
+                    l_2 = []
+                    for y in range(0, len(param)):
+                        aa = str(re.findall(param[y], i))
+                        res = ""
+                        for x in aa[14:]:
+                            if x == '"' or x == "'":
+                                break
+                            res = res + x
+                        if y == 1: res = res[:-2]
+                        l_2.append(res)
+                    l_2.insert(0, "https://auto.kufar" + i[:16])
+                    l_2.insert(0, s)
+                    s += 1
+                    l_1.append(l_2)
+
+                    if l_1[-1][-1] == "":
+                        l_1[-1][-1] = l_1[-2][-1]
+                del l_1[0]
+
+                l_3.append(l_1)
+
+                if c == 2:
+                    l_3[-1] = l_3[-2] + l_1
+                    for el in l_3[-1]:
+                        count = 0
+                        for elem in l_3[-1]:
+                            if elem[1] == el[1]:
+                                count += 1
+                                if count > 1:
+                                    del l_3[-1][l_3[-1].index(elem)]
+                    del l_3[-2]
+                    ss = 0
+                    for i in l_3[-1]:
+                        ss += 1
+                        i[0] = ss
+
         for xx in company:
-            if xx == company[-2]:
-                a = requests.get(
-                    "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=300&atid=2938958&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2ODM2OTMyMDMwMDB9LHsibiI6ImFkX2lkIiwidiI6MTgzMjMyMzYxfV0sImYiOnRydWV9")
-            elif xx == company[-1]:
-                a = requests.get(
-                    "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=300&atid=2938958&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9")
-            else:
-                a = requests.get(
-                    "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=300&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d")
+            pars_company(xx)
 
-            s, l_1 = 0, []
-            param = ['(,"subject":"..........................................................)',
-                     '(price_byn":"......)', '(рина","vl":"...)', '(сота","vl":"...)',
-                     '(метр","vl":"...)', '(езон","vl":".............)', '("name","v":".......................)']
-            for i in re.split("auto.kufar", a.text):
-                l_2 = []
-                for y in range(0, len(param)):
-                    aa = str(re.findall(param[y], i))
-                    res = ""
-                    for x in aa[14:]:
-                        if x == '"' or x == "'":
-                            break
-                        res = res + x
-                    if y == 1: res = res[:-2]
-                    l_2.append(res)
-                l_2.insert(0, "https://auto.kufar" + i[:16])
-                l_2.insert(0, s)
-                s += 1
-                l_1.append(l_2)
-                if l_1[-1][-1] == "":
-                    l_1[-1][-1] = l_1[-2][-1]
-            del l_1[0]
-            l_3.append(l_1)
-
-        l_3[3] = l_3[3] + l_3[4] + l_3[5]
-
-        del l_3[4:]
-
-        for el in l_3[3]:
-            count = 0
-            for elem in l_3[3]:
-                if elem[1] == el[1]:
-                    count += 1
-                    if count > 1:
-                        del l_3[3][l_3[3].index(elem)]
-
-        ss = 0
-        for i in l_3[3]:
-            ss += 1
-            i[0] = ss
+        r_count = 0
         for yy in l_3:
+
             for xx in yy:
+                if yy == l_3[-1]:
+                    xx[8] = "ЦентрТрансСнаб_2"
                 a_1 = Shine(number=xx[0], href=xx[1], company=xx[8], shirina=xx[4], visota=xx[5],
                             diametr=xx[6], price=xx[3], short_note=xx[2])
                 a_1.save()
-        r_count = len(l_3[0]) + len(l_3[1]) + len(l_3[2]) + len(l_3[3])
+                r_count += 1
         b_1 = 'Получны новые данные! '
         time = datetime.now()
 
