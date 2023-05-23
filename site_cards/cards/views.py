@@ -7,56 +7,55 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 
 from cards.forms import ShineForm
-from cards.models import Shine
+from cards.models import Shine, Times
 
 
 
 def main_page(request):
     now = datetime.now()
-    a = now.strftime("%H:%M:%S")
-    # if a > "16:00:00":
-    #     ubdate(request)
+    a = now.strftime('%d-%m-%Y %H:%M')
+    tims = Times.objects.all()
 
-    return render(request, 'cards/index.html', {"a": a})
+    return render(request, 'cards/index.html', {"a": a, "tims": tims})
 
-def report(request):
-    if request.method == "GET":
-        return render(request, 'cards/report.html')
-
-    if request.method == "POST":
-        saler = request.POST["saler"]
-        if saler:
-            if saler == "все":
-                a = Shine.objects.all()
-            else:
-                a = Shine.objects.filter(
-                    Q(company__iregex=saler) | Q(company__iregex=saler))
-            b, byn_2, count = "", 0, 0
-            count_B17 = 0
-            for i in a:
-                count += 1
-                if int(i.number) == 1: b = str(i.company)
-                elif "Б17" in i.short_note:
-                    count_B17 += 1
-
-
-                byn = i.price
-                byn_1 = ""
-                for el in str(byn):
-                    if el.isdigit():
-                        byn_1 = byn_1 + el
-                    elif el == "р": break
-                if byn_1 == "": by = 0
-                else: by = int(byn_1)
-                byn_2 = byn_2 + by
-            if saler == "все": b = "всех продавцов"
-
-            return render(request, 'cards/report.html',
-                          {"b": b, "byn_2": byn_2, "count": count, "count_B17": count_B17})
+# def report(request):
+#     if request.method == "GET":
+#         return render(request, 'cards/report.html')
+#
+#     if request.method == "POST":
+#         saler = request.POST["saler"]
+#         if saler:
+#             if saler == "все":
+#                 a = Shine.objects.all()
+#             else:
+#                 a = Shine.objects.filter(
+#                     Q(company__iregex=saler) | Q(company__iregex=saler))
+#             b, byn_2, count = "", 0, 0
+#             count_B17 = 0
+#             for i in a:
+#                 count += 1
+#                 if int(i.number) == 1: b = str(i.company)
+#                 elif "Б17" in i.short_note:
+#                     count_B17 += 1
+#
+#                 byn = i.price
+#                 byn_1 = ""
+#                 for el in str(byn):
+#                     if el.isdigit():
+#                         byn_1 = byn_1 + el
+#                     elif el == "р": break
+#                 if byn_1 == "": by = 0
+#                 else: by = int(byn_1)
+#                 byn_2 = byn_2 + by
+#             if saler == "все": b = "всех продавцов"
+#
+#             return render(request, 'cards/report.html',
+#                           {"b": b, "byn_2": byn_2, "count": count, "count_B17": count_B17})
 
 def search(request):
+     tims = Times.objects.all()
      if request.method == "GET":
-         return render(request, 'cards/search.html')
+         return render(request, 'cards/search.html', {"tims": tims})
 
      if request.method == "POST":
          radius = request.POST["radius"]
@@ -99,7 +98,6 @@ def ubdate(request):
     if request.method == "GET":
         a = Shine.objects.all()
         a.delete()#очистка бд
-        #shutil.rmtree('media/media/site_cards')#удаление фоток
 
         l_3 = []
         company = ["3186887", "3558328", "5409979", "887851"]
@@ -159,16 +157,21 @@ def ubdate(request):
 
         r_count = 0
         for yy in l_3:
-
             for xx in yy:
-                if yy == l_3[-1]:
-                    xx[8] = "ЦентрТрансСнаб_2"
+                if yy == l_3[-1]: xx[8] = "Сергей"
+                elif yy == l_3[0]: xx[8] = "Максим"
+                elif yy == l_3[1]: xx[8] = "Никита"
+                elif yy == l_3[2]: xx[8] = "Антон"
                 a_1 = Shine(number=xx[0], href=xx[1], company=xx[8], shirina=xx[4], visota=xx[5],
                             diametr=xx[6], price=xx[3], short_note=xx[2])
                 a_1.save()
                 r_count += 1
         b_1 = 'Получны новые данные! '
-        time = datetime.now()
+        time = datetime.now().strftime('%d-%m-%Y %H:%M')
+        a_2 = Times.objects.all()
+        a_2.delete()
+        a_2 = Times(time1=time)
+        a_2.save()
 
         return render(request, 'cards/search.html',
                       {"b_1": b_1, "r_count": r_count, "time": time})

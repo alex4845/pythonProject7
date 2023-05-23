@@ -7,21 +7,29 @@
 {% block content %}
 
 <h1>Поиск шин</h1>
+{% if tims %}
+    {% for i in tims %}
+<h1>Последнее обновление: {{ i.time1 }}</h1>
+    {% endfor %}
+{% endif %}
 
-<form method="post" enctype="multipart/form-data">
+<h1>
+<form class="d-flex" method="post" enctype="multipart/form-data">
          {%  csrf_token %}
 
-    <h4>
-        <input type="text" placeholder="описание" name="radius">
-        <input type="text"  placeholder="ширина" name="shirina">
-        <input type="text"  placeholder="высота" name="visota">
-        <input type="text"  placeholder="диаметр" name="diametr">
-        <input type="text"  placeholder="продавец" name="saler">
 
-    <button type="submit">Поиск</button>
-    </h4>
+        <ul class="nav nav-pills">
+            <li class="nav-item"><input type="text" placeholder="описание" name="radius"></li>
+            <li class="nav-item"><input type="text"  placeholder="ширина" name="shirina"></li>
+            <li class="nav-item"><input type="text"  placeholder="высота" name="visota"></li>
+            <li class="nav-item"><input type="text"  placeholder="диаметр" name="diametr"></li>
+            <li class="nav-item"><input type="text"  placeholder="продавец" name="saler"></li>
+        </ul>
+
+    <button class="btn btn-outline-success" type="submit">Поиск</button>
 
     </form>
+</h1>
 {% if b_1 %}
     <h2>{{ b_1 }} Всего объявлений: {{ r_count }} Время обновления {{ time }}</h2>
 
@@ -30,11 +38,11 @@
 {% if a %}
     {% for i in a %}
 <div>
-    <h4><a href="{% url 'action' pk=i.pk %}">
+    <h3><a href="{% url 'action' pk=i.pk %}">
         {{ i.number }} | {{ i.short_note }} | {{ i.price }} руб | {{ i.shirina }}
          / {{ i.visota }} {{ i.diametr }} | {{ i.company }}
 
-    </a></h4>
+    </a></h3>
 
 
 </div>

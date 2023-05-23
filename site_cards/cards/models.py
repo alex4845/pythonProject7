@@ -14,6 +14,9 @@ class Shine(models.Model):
     def __str__(self):
         return self.short_note
 
+class Times(models.Model):
+    time1 = models.TextField(blank=True)
+
 
 
 
