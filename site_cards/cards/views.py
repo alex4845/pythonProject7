@@ -71,8 +71,9 @@ def search(request):
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
                  )
-         elif shirina and visota:
-             a = Shine.objects.filter(shirina__contains=shirina).filter(visota__contains=visota)
+         elif shirina and visota and diametr:
+             a = Shine.objects.filter(shirina__contains=shirina).filter(visota__contains=visota)\
+                 .filter(diametr__contains=diametr)
          elif shirina:
              a = Shine.objects.filter(shirina__contains=shirina)
          elif diametr:

@@ -1,0 +1,25 @@
+body {
+       padding: 3%;
+
+       }
+
+a {
+
+      margin: 5px;
+}
+
+input {
+      font-weight: bold;
+      height: 55px;
+      margin: 10px;
+}
+
+button {
+      font-weight: bold;
+      width: 500px;
+      margin: 15px;
+}
+
+h1 {
+      font-size: 40px;
+      }

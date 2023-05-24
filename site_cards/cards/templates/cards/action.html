@@ -1,15 +1,15 @@
 {% extends 'cards/base.html' %}
 
 {% block title %}
-Действия с записью
+Результат
 {% endblock %}
 
 {% block content %}
-<h2>Действия с записью</h2>
+<h2>Результат</h2>
 {% if a %}
 
-    <h3>{{ a.short_note }} | {{ a.price }} руб| {{ a.company }}</h3>
-    <h3><a href="{{ a.href }}">{{ a.href }}</a> </h3>
+    <h1>{{ a.short_note }} | {{ a.price }} руб| {{ a.company }}</h1>
+    <h1><a href="{{ a.href }}">{{ a.href }}</a> </h1>
 
 
 {% endif %}
