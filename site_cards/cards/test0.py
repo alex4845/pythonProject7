@@ -1,6 +1,6 @@
 import re
 import requests
-
+#"https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=887851&cat=2075&cmp=1&sort=lst.d"
 l_3 = []
 company = ["3186887", "3558328", "5409979", "887851"]
 def pars_company(xx):
@@ -15,15 +15,15 @@ def pars_company(xx):
         c += 1
         a = requests.get(aa)
         s, l_1 = 0, []
-        param = ['(,"subject":"..........................................................)',
-                 '(price_byn":"......)', '(рина","vl":"...)', '(сота","vl":"...)',
-                 '(метр","vl":"...)', '(езон","vl":".............)', '("name","v":".......................)']
+        param = ['("1","subject":"..........................................................)',
+                 '(e,"price_byn":"......)', '("Ширина","vl":"...)', '("Высота","vl":"...)',
+                 '(Диаметр","vl":"...)', '(р диска","vl":"...)', '(:"Сезон","vl":".............)', '(p":"name","v":".......................)']
         for i in re.split("auto.kufar", a.text):
             l_2 = []
             for y in range(0, len(param)):
                 aa = str(re.findall(param[y], i))
                 res = ""
-                for x in aa[14:]:
+                for x in aa[17:]:
                     if x == '"' or x == "'":
                         break
                     res = res + x

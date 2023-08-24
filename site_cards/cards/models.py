@@ -8,6 +8,7 @@ class Shine(models.Model):
     shirina = models.CharField(max_length=10, blank=True)
     visota = models.CharField(max_length=10, blank=True)
     diametr = models.CharField(max_length=10, blank=True)
+    diametr_d = models.CharField(max_length=10, blank=True)
     price = models.CharField(max_length=10, blank=True)
     short_note = models.CharField(max_length=50, blank=True, null=True)
 

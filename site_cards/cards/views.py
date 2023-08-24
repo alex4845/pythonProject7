@@ -66,14 +66,21 @@ def search(request):
          if radius and diametr:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
-             ).filter(short_note__contains=diametr)
+             ).filter(diametr_d__contains=diametr)
          elif radius:
              a = Shine.objects.filter(
                  Q(short_note__iregex=radius) | Q(short_note__iregex=radius)
                  )
-         elif shirina and visota and diametr:
+         elif shirina and visota and diametr and saler:
              a = Shine.objects.filter(shirina__contains=shirina).filter(visota__contains=visota)\
+                 .filter(diametr__contains=diametr).filter(
+                 Q(company__iregex=saler) | Q(company__iregex=saler)
+                 )
+         elif shirina and visota and diametr:
+             a = Shine.objects.filter(shirina__contains=shirina).filter(visota__contains=visota) \
                  .filter(diametr__contains=diametr)
+         elif shirina and visota:
+             a = Shine.objects.filter(shirina__contains=shirina).filter(visota__contains=visota)
          elif shirina:
              a = Shine.objects.filter(shirina__contains=shirina)
          elif diametr:
@@ -113,15 +120,16 @@ def ubdate(request):
                 c += 1
                 a = requests.get(aa)
                 s, l_1 = 0, []
-                param = ['(,"subject":"..........................................................)',
-                         '(price_byn":"......)', '(рина","vl":"...)', '(сота","vl":"...)',
-                         '(метр","vl":"...)', '(езон","vl":".............)', '("name","v":".......................)']
+                param = ['("1","subject":"..........................................................)',
+                         '(e,"price_byn":"......)', '("Ширина","vl":"...)', '("Высота","vl":"...)',
+                         '(Диаметр","vl":"...)', '(р диска","vl":"...)', '(:"Сезон","vl":".............)',
+                         '(p":"name","v":".......................)']
                 for i in re.split("auto.kufar", a.text):
                     l_2 = []
                     for y in range(0, len(param)):
                         aa = str(re.findall(param[y], i))
                         res = ""
-                        for x in aa[14:]:
+                        for x in aa[17:]:
                             if x == '"' or x == "'":
                                 break
                             res = res + x
@@ -159,12 +167,12 @@ def ubdate(request):
         r_count = 0
         for yy in l_3:
             for xx in yy:
-                if yy == l_3[-1]: xx[8] = "Сергей"
-                elif yy == l_3[0]: xx[8] = "Максим"
-                elif yy == l_3[1]: xx[8] = "Никита"
-                elif yy == l_3[2]: xx[8] = "Антон"
-                a_1 = Shine(number=xx[0], href=xx[1], company=xx[8], shirina=xx[4], visota=xx[5],
-                            diametr=xx[6], price=xx[3], short_note=xx[2])
+                if yy == l_3[-1]: xx[9] = "Сергей"
+                elif yy == l_3[0]: xx[9] = "Максим"
+                elif yy == l_3[1]: xx[9] = "Никита"
+                elif yy == l_3[2]: xx[9] = "Антон"
+                a_1 = Shine(number=xx[0], href=xx[1], company=xx[9], shirina=xx[4], visota=xx[5],
+                            diametr=xx[6], diametr_d=xx[7], price=xx[3], short_note=xx[2])
                 a_1.save()
                 r_count += 1
         b_1 = 'Получны новые данные! '
