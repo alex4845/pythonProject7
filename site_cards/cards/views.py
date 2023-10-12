@@ -10,7 +10,6 @@ from cards.forms import ShineForm
 from cards.models import Shine, Times
 
 
-
 def main_page(request):
     now = datetime.now()
     a = now.strftime('%d-%m-%Y %H:%M')
@@ -107,71 +106,79 @@ def ubdate(request):
         a = Shine.objects.all()
         a.delete()#очистка бд
 
-        l_3 = []
-        company = ["3186887", "3558328", "5409979", "887851"]
-        def pars_company(xx):
-            request1 = "https://cre-api-v2.kufar.by/items-search/v1/engine/v1/search/rendered-paginated?size=200&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d"
-            request2 = "https://api.kufar.by/search-api/v1/search/rendered-paginated?size=100&atid=" + xx + "&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6ZmFsc2UsInAiOjF9"
-            request_list = [request1, request2]
-            if xx == "3186887" or xx == "5409979":
-                request_list = [request1]
-            c = 0
-            for aa in request_list:
-                c += 1
-                a = requests.get(aa)
-                s, l_1 = 0, []
-                param = ['("1","subject":"..........................................................)',
-                         '(e,"price_byn":"......)', '("Ширина","vl":"...)', '("Высота","vl":"...)',
-                         '(Диаметр","vl":"...)', '(р диска","vl":"...)', '(:"Сезон","vl":".............)',
-                         '(p":"name","v":".......................)']
-                for i in re.split("auto.kufar", a.text):
-                    l_2 = []
-                    for y in range(0, len(param)):
-                        aa = str(re.findall(param[y], i))
-                        res = ""
-                        for x in aa[17:]:
-                            if x == '"' or x == "'":
-                                break
-                            res = res + x
-                        if y == 1: res = res[:-2]
-                        l_2.append(res)
-                    l_2.insert(0, "https://auto.kufar" + i[:16])
-                    l_2.insert(0, s)
-                    s += 1
-                    l_1.append(l_2)
+        def search(search_res):
+            list_saler = []
+            for el in search_res["ads"]:
+                shir, vis, dia, dia_d = '', '', '', ''
+                for elem in el["ad_parameters"]:
+                    if elem["pl"] == "Ширина":
+                        shir = elem["vl"]
+                    if elem["pl"] == "Высота":
+                        vis = elem["vl"]
+                    if elem["pl"] == "Диаметр":
+                        dia = str(elem["vl"])
+                    if elem["pl"] == "Диаметр диска":
+                        dia_d = str(elem["vl"])
 
-                    if l_1[-1][-1] == "":
-                        l_1[-1][-1] = l_1[-2][-1]
-                del l_1[0]
+                list_saler.append(
+                    [el["ad_link"], el["subject"], el["price_byn"][:-2], shir, vis, dia[1:], dia_d[1:], key])
+            return list_saler
 
-                l_3.append(l_1)
+        salers = {"Максим": "3186887", "Никита": "3558328", "Антон": "5409979", "Сергей": "887851"}
+        list_salers = []
 
-                if c == 2:
-                    l_3[-1] = l_3[-2] + l_1
-                    for el in l_3[-1]:
-                        count = 0
-                        for elem in l_3[-1]:
-                            if elem[1] == el[1]:
-                                count += 1
-                                if count > 1:
-                                    del l_3[-1][l_3[-1].index(elem)]
-                    del l_3[-2]
-                    ss = 0
-                    for i in l_3[-1]:
-                        ss += 1
-                        i[0] = ss
+        for key, value in salers.items():
+            search_res = requests.get(
+                f'https://api.kufar.by/search-api/v1/search/rendered-paginated?size=200&atid={value}&cat=2075&cmp=1&sort=lst.d').json()
+            list_saler = search(search_res)
+            con = search_res["total"]
+            print("Всего обьяв: ", con)
 
-        for xx in company:
-            pars_company(xx)
+            if con > 200:
+                search_res = requests.get(
+                    f'https://api.kufar.by/search-api/v1/search/rendered-paginated?size=200&atid={value}&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoicmVsIiwiYyI6W3sibiI6Imxpc3RfdGltZSIsInYiOjE2OTUyOTUzMjkwMDB9LHsibiI6ImFkX2lkIiwidiI6MjA4NDM5MzA3fV0sImYiOnRydWV9').json()
+                list_saler1 = search(search_res)
+                for i in list_saler1:
+                    if i not in list_saler:
+                        list_saler.append(i)
+            if con > 360:
+                search_res = requests.get(
+                    f'https://api.kufar.by/search-api/v1/search/rendered-paginated?size=32&atid={value}&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6dHJ1ZSwicCI6MTIsInBpdCI6IjI4Mjg1MDUyIn0=').json()
+                list_saler2 = search(search_res)
+                for i in list_saler2:
+                    if i not in list_saler:
+                        list_saler.append(i)
+            if con > 384:
+                search_res = requests.get(
+                    f'https://api.kufar.by/search-api/v1/search/rendered-paginated?size=32&atid={value}&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6dHJ1ZSwicCI6MTMsInBpdCI6IjI4Mjg1MDUyIn0=').json()
+                list_saler2 = search(search_res)
+                for i in list_saler2:
+                    if i not in list_saler:
+                        list_saler.append(i)
+            if con > 416:
+                search_res = requests.get(
+                    f'https://api.kufar.by/search-api/v1/search/rendered-paginated?size=32&atid={value}&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6dHJ1ZSwicCI6MTQsInBpdCI6IjI4Mjg1MDYzIn0=').json()
+                list_saler2 = search(search_res)
+                for i in list_saler2:
+                    if i not in list_saler:
+                        list_saler.append(i)
+            if con > 448:
+                search_res = requests.get(
+                    f'https://api.kufar.by/search-api/v1/search/rendered-paginated?size=32&atid={value}&cat=2075&cmp=1&sort=lst.d&cursor=eyJ0IjoiYWJzIiwiZiI6dHJ1ZSwicCI6MTUsInBpdCI6IjI4Mjg1MDcyIn0=').json()
+                list_saler2 = search(search_res)
+                for i in list_saler2:
+                    if i not in list_saler:
+                        list_saler.append(i)
+            s = 0
+            for pos in list_saler:
+                s += 1
+                pos.insert(0, s)
+            list_salers.append(list_saler)
 
         r_count = 0
-        for yy in l_3:
+        for yy in list_salers:
             for xx in yy:
-                if yy == l_3[-1]: xx[9] = "Сергей"
-                elif yy == l_3[0]: xx[9] = "Максим"
-                elif yy == l_3[1]: xx[9] = "Никита"
-                elif yy == l_3[2]: xx[9] = "Антон"
-                a_1 = Shine(number=xx[0], href=xx[1], company=xx[9], shirina=xx[4], visota=xx[5],
+                a_1 = Shine(number=xx[0], href=xx[1], company=xx[8], shirina=xx[4], visota=xx[5],
                             diametr=xx[6], diametr_d=xx[7], price=xx[3], short_note=xx[2])
                 a_1.save()
                 r_count += 1
